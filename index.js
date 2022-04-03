@@ -40,15 +40,20 @@ app.get('/api/stats', (req, res) => {
 });
 
 app.post('/updateorders', upload.single('image'), async (req, res) => {
-    if (!req.body.reason || !req.body.password || req.body.password != process.env.PASSWORD) {
+    if (!req.body || !req.body.reason || !req.body.password || req.body.password != process.env.PASSWORD) {
         res.send('Ongeldig wachtwoord!');
-        fs.unlinkSync(req.file.path);
+        if (req.hasOwnProperty('file') && req.file.hasOwnProperty('path')) {
+            fs.unlinkSync(req.file.path);
+        }
+        //
         return;
     }
 
     if (req.file.mimetype !== 'image/png') {
         res.send('Bestand moet een PNG zijn!');
-        fs.unlinkSync(req.file.path);
+        if (req.hasOwnProperty('file') && req.file.hasOwnProperty('path')) {
+            fs.unlinkSync(req.file.path);
+        }
         return;
     }
 
